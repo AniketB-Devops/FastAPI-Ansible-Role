@@ -1,0 +1,4 @@
+fastapi_dir: /opt/fastapi_app
+fastapi_service:  fastapi-demo.service
+python_pkg: uvicorn[standard]
+app_file: main.py

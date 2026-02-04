@@ -1,0 +1,41 @@
+---
+- name: restart fastapi
+  service:
+    name: "{{ fastapi_service }}"
+    state: restarted
+    enabled: yes
+
+- name: reload fastapi
+  service:
+    name: "{{ fastapi_service }}"
+    state: reloaded
+
+- name: daemon reload
+  command: systemctl daemon-reload
+  notify: restart fastapi   
+
+- name: create app file handler
+  copy:
+    dest: "{{ fastapi_dir }}/{{ app_file }}"
+    content: |
+      from fastapi import FastAPI
+
+      app = FastAPI()
+
+      @app.get("/")
+      def read_root():
+          return {"Hello": "World"}
+
+- name: conditional handler
+  debug:
+    msg: "Conditional handler triggered!"
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+- name: force immediate handler
+  debug:
+    msg: "This handler runs immediately after being triggered"
+  listen: force immediate handler
+
+- name: loop handler
+  debug:
+    msg: "Handler triggered by loop task"

@@ -1,0 +1,73 @@
+---
+# 1️ Install dependencies
+- name: Install python3 and pip
+  apt:
+    name:
+      - python3
+      - python3-pip
+    state: present
+    update_cache: yes
+    
+  notify:
+    - restart fastapi
+   
+    - conditional handler
+#  Flush handlers mid-play
+
+- name: Force flush after package install
+  meta: flush_handlers
+
+
+# 2 Create app directory
+- name: Create FastAPI directory
+  file:
+    path: "{{ fastapi_dir }}"
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+  notify: create app file handler
+
+# 3️ Install FastAPI & Uvicorn
+- name: Install FastAPI and Uvicorn (ignore installed)
+  pip:
+    name:
+      - fastapi
+      - uvicorn[standard]
+    state: present
+    extra_args: "--break-system-packages --ignore-installed"
+
+# 4️ Copy systemd service
+- name: Deploy FastAPI systemd unit
+  template:
+    src: fastapi.service.j2
+    dest: /etc/systemd/system/{{ fastapi_service }}
+  notify:
+    - daemon reload
+   
+
+# 5️ Immediate handler example
+- name: Trigger immediate handler
+  debug:
+    msg: "Force handler execution right now"
+  notify: force immediate handler
+
+# 6️ Loop handler example
+- name: Create multiple demo files
+  file:
+    path: "{{ fastapi_dir }}/{{ item }}"
+    state: touch
+  loop:
+    - file1.txt
+    - file2.txt
+    - file3.txt
+  notify: loop handler
+
+# 7️ Flush handlers mid-play
+- name: Flush handlers now
+  meta: flush_handlers
+
+# 8️ Confirm flush
+- name: Confirm handlers executed
+  debug:
+    msg: "Handlers executed so far have been flushed"
