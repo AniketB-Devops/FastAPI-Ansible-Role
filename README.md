@@ -194,9 +194,3 @@ Middleware Application Support & DevOps Engineer
 5+ Years Experience  
 
 ---
-
-## 📄 License
-
-MIT
-
-:wq1
